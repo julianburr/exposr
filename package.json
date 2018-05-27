@@ -1,0 +1,36 @@
+{
+  "name": "exposr",
+  "version": "0.0.0",
+  "description": "Small node script helping with tagging and publishing semantic releases",
+  "bin": "index.js",
+  "scripts": {
+    "release": "node ./index.js publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julianburr/exposr.git"
+  },
+  "keywords": [
+    "node",
+    "publish",
+    "release"
+  ],
+  "author": "Julian Burr <hello@julianburr.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/julianburr/exposr/issues"
+  },
+  "homepage": "https://github.com/julianburr/exposr",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "child_process": "^1.0.2",
+    "conventional-changelog-angular": "^3.0.7",
+    "conventional-commit-types": "^2.2.0",
+    "conventional-recommended-bump": "^2.0.9",
+    "fs-extra": "^6.0.1",
+    "gitlog": "^3.1.2",
+    "path": "^0.12.7",
+    "prompt-confirm": "^1.2.0",
+    "semver": "^5.5.0"
+  }
+}
