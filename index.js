@@ -190,23 +190,27 @@ function updateChangelogJson (nextVersion, newCommits, currClJson) {
   return newClJson;
 }
 
+function fmtDate (ts) {
+  const date = new Date(ts);
+  return (
+    `${date.getFullYear()}-` +
+    `${('00' + (date.getMonth() + 1)).substr(-2)}-` +
+    `${('00' + date.getDate()).substr(-2)}`
+  );
+}
+
 function createChangelogMarkdown (clJson) {
-  const fmtDate = (ts) => {
-    const date = new Date(ts);
-    return (
-      `${date.getFullYear()}-` +
-      `${('00' + (date.getMonth() + 1)).substr(-2)}-` +
-      `${('00' + date.getDate()).substr(-2)}`
-    );
-  };
+  const pkgJson = getPackageJson();
   let md = '# Changelog\n';
   Object.keys(clJson).reverse().forEach((version) => {
     md += `\n## v${version} (${fmtDate(clJson[version].ts)})`;
-    clJson[version].commits
-      .filter((commit) => commit.type)
-      .forEach((commit) => {
-        md += `\n * \`${commit.type.title}\` ${commit.subject}`;
-      });
+    clJson[version].commits.forEach((commit) => {
+      md +=
+        `\n * **${commit.type.title} ` +
+        `[${commit.abbrevHash}]` +
+        `(${pkgJson.repository.url}/commit/${commit.hash})**` +
+        ` - ${commit.subject}`;
+    });
   });
   fs.writeFileSync(CL_MD_PATH, md);
 }
