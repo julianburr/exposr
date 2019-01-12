@@ -77,15 +77,12 @@ function getLatestChangelogCommit (version, clJson) {
     return null;
   }
   const lastCommit = commits[0];
-  return lastCommit ? lastCommit.hash || null : null;
+  return lastCommit ? lastCommit || null : null;
 }
 
-function getCommits (lastCommit, number = 100) {
+function getCommits (number = 100) {
   return new Promise((resolve, reject) => {
-    gitlog({ repo: __dirname, after: lastCommit, number }, function (
-      err,
-      result
-    ) {
+    gitlog({ repo: __dirname, number }, function (err, result) {
       if (err) {
         reject(new Error(err));
       } else {
@@ -201,14 +198,13 @@ function fmtDate (ts) {
 
 function createChangelogMarkdown (clJson) {
   const pkgJson = getPackageJson();
-  let md = '# Changelog\n';
+  let md = '# Changelog';
   Object.keys(clJson).reverse().forEach((version) => {
-    md += `\n## v${version} (${fmtDate(clJson[version].ts)})`;
+    md += `\n\n## v${version} (${fmtDate(clJson[version].ts)})\n`;
     clJson[version].commits.forEach((commit) => {
       md +=
-        `\n * **${commit.type.title} ` +
-        `[${commit.abbrevHash}]` +
-        `(${pkgJson.repository.url}/commit/${commit.hash})**` +
+        `\n * [${commit.abbrevHash}]` +
+        `(${pkgJson.homepage}/commit/${commit.hash})` +
         ` - ${commit.subject}`;
     });
   });
@@ -224,11 +220,19 @@ async function run () {
   const pkgJson = getPackageJson();
   const clJson = getChangelogJson();
 
-  // Get last commits
-  const lastClHash = getLatestChangelogCommit(pkgJson.version, clJson);
+  // Get commits
+  const commits = await getCommits();
 
-  // + Check if there have been any new commits
-  const newCommits = await getCommits(lastClHash);
+  // + filter depending on last commit in change log
+  const lastCommit = getLatestChangelogCommit(pkgJson.version, clJson);
+  let newCommits = commits;
+  if (lastCommit && lastCommit.hash) {
+    newCommits = newCommits.slice(
+      0,
+      newCommits.findIndex((c) => c.hash === lastCommit.hash)
+    );
+  }
+
   if (!newCommits.length) {
     console.log(
       chalk.yellow.bold(
