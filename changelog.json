@@ -67,5 +67,23 @@
       }
     ],
     "ts": 1547311084471
+  },
+  "1.0.2": {
+    "commits": [
+      {
+        "status": [
+          "M"
+        ],
+        "files": [
+          "index.js"
+        ],
+        "abbrevHash": "29a2900",
+        "hash": "29a2900dadde4ce048db8e5e5a0e0ef8ddf1cd42",
+        "subject": "fix: Fix changelog md generation",
+        "authorName": "Julian Burr",
+        "type": null
+      }
+    ],
+    "ts": 1547312219468
   }
 }
