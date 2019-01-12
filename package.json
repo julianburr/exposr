@@ -1,6 +1,6 @@
 {
   "name": "exposr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Small node script helping with tagging and publishing semantic releases",
   "bin": "index.js",
   "scripts": {
