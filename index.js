@@ -80,9 +80,12 @@ function getLatestChangelogCommit (version, clJson) {
   return lastCommit ? lastCommit.hash || null : null;
 }
 
-function getCommits (number = 50) {
+function getCommits (lastCommit, number = 100) {
   return new Promise((resolve, reject) => {
-    gitlog({ repo: __dirname, number }, function (err, result) {
+    gitlog({ repo: __dirname, after: lastCommit, number }, function (
+      err,
+      result
+    ) {
       if (err) {
         reject(new Error(err));
       } else {
@@ -217,18 +220,11 @@ async function run () {
   const pkgJson = getPackageJson();
   const clJson = getChangelogJson();
 
-  // Get commits
-  const commits = await getCommits();
-  // + Check if there have been any new commits
+  // Get last commits
   const lastClHash = getLatestChangelogCommit(pkgJson.version, clJson);
-  let newCommits = commits;
-  if (lastClHash) {
-    const index = commits.findIndex((c) => c.hash === lastClHash);
-    if (index > -1) {
-      newCommits = commits.slice(0, index);
-    }
-  }
 
+  // + Check if there have been any new commits
+  const newCommits = await getCommits(lastClHash);
   if (!newCommits.length) {
     console.log(
       chalk.yellow.bold(
